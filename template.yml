@@ -3,26 +3,15 @@ AWSTemplateFormatVersion: 2010-09-09
 Transform: AWS::Serverless-2016-10-31
   
 Resources:
-  AWSSDKv3Layer:
+  SDKLayer:
     Type: AWS::Serverless::LayerVersion
     Properties:
       CompatibleRuntimes:
         - nodejs14.x
         - nodejs12.x
         - nodejs10.x
-      ContentUri: s3://aws-ilt-courses/nodejs-aws-sdk-v3.zip
-      LayerName: AWSSDKv3
-      RetentionPolicy: Delete
-
-  XRaySDKLayer:
-    Type: AWS::Serverless::LayerVersion
-    Properties:
-      CompatibleRuntimes:
-        - nodejs14.x
-        - nodejs12.x
-        - nodejs10.x
-      ContentUri: s3://aws-ilt-courses/nodejs-xray-sdk.zip
-      LayerName: XRaySDK
+      ContentUri: layer/nodejs.zip
+      LayerName: SDKs
       RetentionPolicy: Delete
 
   getAllTableFunction:
@@ -34,8 +23,7 @@ Resources:
       FunctionName: getAllFunction
       Handler: src/handlers/get-all.getAllHandler
       Layers: 
-        - !Ref AWSSDKv3Layer
-        - !Ref XRaySDKLayer
+        - !Ref SDKLayer
       MemorySize: 128
       Policies:
         - DynamoDBCrudPolicy:
@@ -60,8 +48,7 @@ Resources:
       FunctionName: getByIdFunction
       Handler: src/handlers/get-by-id.getByIdHandler
       Layers: 
-        - !Ref AWSSDKv3Layer
-        - !Ref XRaySDKLayer
+        - !Ref SDKLayer
       MemorySize: 128
       Policies:
         - DynamoDBCrudPolicy:
@@ -86,8 +73,7 @@ Resources:
       FunctionName: putFunction
       Handler: src/handlers/put.putHandler
       Layers: 
-        - !Ref AWSSDKv3Layer
-        - !Ref XRaySDKLayer
+        - !Ref SDKLayer
       MemorySize: 128
       Policies:
         - DynamoDBCrudPolicy:

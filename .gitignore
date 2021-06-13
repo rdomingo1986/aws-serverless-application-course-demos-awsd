@@ -2,4 +2,3 @@ node_modules
 package-lock.json
 .aws-sam
 samconfig.toml
-*.zip
