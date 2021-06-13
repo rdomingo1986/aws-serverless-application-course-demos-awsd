@@ -25,7 +25,8 @@ Resources:
         - !Ref AWSSDKv3Layer
       MemorySize: 128
       Policies:
-        - AWSLambdaBasicExecutionRole
+        - DynamoDBCrudPolicy:
+            TableName: !Ref BooksTable
       Runtime: nodejs14.x
       Timeout: 100
       Tracing: Active
