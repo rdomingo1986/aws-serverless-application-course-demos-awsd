@@ -1,3 +1,5 @@
+AWSTemplateFormatVersion: 2010-09-09
+
 Transform: AWS::Serverless-2016-10-31
   
 Resources:
@@ -8,8 +10,5 @@ Resources:
         - nodejs14.x
         - nodejs12.x
         - nodejs10.x
-      ContentUri: 
-        S3Bucket: ""
-        S3Key: ""
+      ContentUri: s3://aws-ilt-courses/nodejs.zip
       LayerName: AWSSDKv3
-
