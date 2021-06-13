@@ -1,0 +1,15 @@
+Transform: AWS::Serverless-2016-10-31
+  
+Resources:
+  AWSSDKv3Layer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      CompatibleRuntimes:
+        - nodejs14.x
+        - nodejs12.x
+        - nodejs10.x
+      ContentUri: 
+        S3Bucket: ""
+        S3Key: ""
+      LayerName: AWSSDKv3
+
