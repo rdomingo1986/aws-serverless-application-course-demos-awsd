@@ -12,3 +12,20 @@ Resources:
         - nodejs10.x
       ContentUri: s3://aws-ilt-courses/nodejs.zip
       LayerName: AWSSDKv3
+
+  scanTableFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Environment:
+        Variables:
+          TABLE: ""
+      FunctionName: getAllFunction
+      Handler: src/handlers/get-all.getAllHandler
+      Layers: 
+        - !Ref AWSSDKv3Layer
+      MemorySize: 128
+      Policies:
+        - AWSLambdaBasicExecutionRole
+      Runtime: nodejs14.x
+      Timeout: 100
+      Tracing: Active
