@@ -4,10 +4,16 @@ const AWSXRay = require('aws-xray-sdk-core');
 
 const dynamodb = AWSXRay.captureAWSv3Client(new DynamoDB());
 
-exports.getAllHandler = async (event) => {
+exports.getByIdHandler = async (event) => {
   try {
-    var response = await dynamodb.scan({
-      TableName: process.env.TABLE
+    var response = await dynamodb.query({
+      TableName: process.env.TABLE,
+      KeyConditionExpression: 'Author = :author_name',
+      ExpressionAttributeValues: {
+        ':author_name': {
+          S: decodeURIComponent(event.pathParameters.id)
+        }
+      }
     });
     return {
       statusCode: 200,

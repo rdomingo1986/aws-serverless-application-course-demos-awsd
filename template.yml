@@ -10,10 +10,22 @@ Resources:
         - nodejs14.x
         - nodejs12.x
         - nodejs10.x
-      ContentUri: s3://aws-ilt-courses/nodejs.zip
+      ContentUri: s3://aws-ilt-courses/nodejs-aws-sdk-v3.zip
       LayerName: AWSSDKv3
+      RetentionPolicy: Delete
 
-  scanTableFunction:
+  XRaySDKLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      CompatibleRuntimes:
+        - nodejs14.x
+        - nodejs12.x
+        - nodejs10.x
+      ContentUri: s3://aws-ilt-courses/nodejs-xray-sdk.zip
+      LayerName: XRaySDK
+      RetentionPolicy: Delete
+
+  getAllTableFunction:
     Type: AWS::Serverless::Function
     Properties:
       Environment:
@@ -23,6 +35,7 @@ Resources:
       Handler: src/handlers/get-all.getAllHandler
       Layers: 
         - !Ref AWSSDKv3Layer
+        - !Ref XRaySDKLayer
       MemorySize: 128
       Policies:
         - DynamoDBCrudPolicy:
@@ -30,6 +43,65 @@ Resources:
       Runtime: nodejs14.x
       Timeout: 100
       Tracing: Active
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /
+            Method: GET
+            RestApiId: !Ref restApi
+
+  getByIdTableFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Environment:
+        Variables:
+          TABLE: !Ref BooksTable
+      FunctionName: getByIdFunction
+      Handler: src/handlers/get-by-id.getByIdHandler
+      Layers: 
+        - !Ref AWSSDKv3Layer
+        - !Ref XRaySDKLayer
+      MemorySize: 128
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref BooksTable
+      Runtime: nodejs14.x
+      Timeout: 100
+      Tracing: Active
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /{id}
+            Method: GET
+            RestApiId: !Ref restApi            
+
+  putTableFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Environment:
+        Variables:
+          TABLE: !Ref BooksTable
+      FunctionName: putFunction
+      Handler: src/handlers/put.putHandler
+      Layers: 
+        - !Ref AWSSDKv3Layer
+        - !Ref XRaySDKLayer
+      MemorySize: 128
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref BooksTable
+      Runtime: nodejs14.x
+      Timeout: 100
+      Tracing: Active
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /
+            Method: POST
+            RestApiId: !Ref restApi
 
   BooksTable:
     Type: AWS::DynamoDB::Table
@@ -66,3 +138,9 @@ Resources:
           Projection:
             ProjectionType: KEYS_ONLY
       TableName: Books
+
+  restApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      TracingEnabled: true
