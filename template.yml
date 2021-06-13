@@ -18,7 +18,7 @@ Resources:
     Properties:
       Environment:
         Variables:
-          TABLE: ""
+          TABLE: !Ref BooksTable
       FunctionName: getAllFunction
       Handler: src/handlers/get-all.getAllHandler
       Layers: 
@@ -29,3 +29,39 @@ Resources:
       Runtime: nodejs14.x
       Timeout: 100
       Tracing: Active
+
+  BooksTable:
+    Type: AWS::DynamoDB::Table
+    Properties: 
+      AttributeDefinitions: 
+        - AttributeName: Author
+          AttributeType: S
+        - AttributeName: Title
+          AttributeType: S
+        - AttributeName: Category
+          AttributeType: S
+        - AttributeName: Year
+          AttributeType: N
+      BillingMode: PAY_PER_REQUEST
+      GlobalSecondaryIndexes: 
+        - IndexName: CategoryGSIndex
+          KeySchema:
+            - AttributeName: Category
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+      KeySchema: 
+        - AttributeName: Author
+          KeyType: HASH
+        - AttributeName: Title
+          KeyType: RANGE
+      LocalSecondaryIndexes: 
+        - IndexName: YearLSIndex
+          KeySchema:
+            - AttributeName: Author
+              KeyType: HASH
+            - AttributeName: Year
+              KeyType: RANGE
+          Projection:
+            ProjectionType: KEYS_ONLY
+      TableName: Books
